@@ -1,0 +1,16 @@
+#!/usr/bin/env python3.10
+
+import sys
+from pydub import AudioSegment
+
+if len(sys.argv) == 5:
+    inputf   = sys.argv[1]
+    start_ms = int(sys.argv[2])
+    end_ms   = int(sys.argv[3])
+    outputf  = sys.argv[4]
+else:
+    print('Usage')
+
+sound = AudioSegment.from_wav(inputf)
+extract = sound[start_ms:end_ms]
+extract.export(outputf, format="wav", parameters=["-ac", "1", "-ar", "22050"])

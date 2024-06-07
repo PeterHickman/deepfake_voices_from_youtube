@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+FILENAME=$1
+
+if [ ! -e ${FILENAME}.mp4 ]; then
+  echo "Getting ${FILENAME}.mp4"
+  yt-dlp -q -f "bestaudio[ext=m4a]","bestaudio[ext=webm]" ${FILENAME} -o ${FILENAME}.mp4
+else
+  echo "Using existing ${FILENAME}.mp4"
+fi
+
+if [ ! -e ${FILENAME}.en.json3 ]; then
+  echo "Getting the transcription"
+  yt-dlp -q --skip-download --write-subs --write-auto-subs --sub-lang en --sub-format json3 --convert-subs srt --output ${FILENAME} ${FILENAME}
+else
+  echo "Using existing ${FILENAME}.en.json3"
+fi
+
+echo "Extracting audio from ${FILENAME}"
+ffmpeg -v 0 -y -i ${FILENAME}.mp4 -ac 1 -ar 22050 ${FILENAME}.wav
+
+if [ -e ${FILENAME}.wav ] ; then
+  echo "Segmenting"
+  ./parse_json3 ${FILENAME}.en.json3
+else
+  echo "Did not generate ${FILENAME}.wav"
+fi
+
+echo
+
+rm ${FILENAME}.mp4
+rm ${FILENAME}.wav
+rm ${FILENAME}.en.json3

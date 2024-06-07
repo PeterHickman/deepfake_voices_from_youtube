@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+Dir.mkdir('data') unless File.directory?('data')
+
+filename = ARGV.shift
+json = open(filename, 'r').read
+data = JSON.parse(json)
+
+start = 0
+words = String.new
+file_number = 0
+
+name = File.basename(filename, '.en.json3')
+
+md = File.open("#{name}.txt", 'w')
+
+data['events'].each do |event|
+  next unless event.key?('segs')
+
+  file_number += 1
+
+  d = event['dDurationMs']
+  next if d < 1000 # Too short an utterance cannot be processed
+
+  start_ms = event['tStartMs']
+  end_ms   = start_ms + d
+  words = event['segs'].map { |s| s['utf8'] }.join(' ').gsub(/\s+/, ' ')
+
+  fn = "#{name}_%05d" % file_number
+
+  system("./segment #{name}.wav #{start_ms} #{end_ms} data/#{fn}.wav")
+  md.puts "#{fn}|0|#{words}"
+end
+md.close
