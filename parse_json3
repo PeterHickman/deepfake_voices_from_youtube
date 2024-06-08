@@ -29,6 +29,7 @@ data['events'].each do |event|
 
   next if words == ''
   next if words.include?('[') # This utterance includes a swear word or music or something
+  next unless words.include?(' ') # Ignore 1 word utterances
 
   file_number += 1
 
@@ -36,5 +37,6 @@ data['events'].each do |event|
 
   system("./segment #{name}.wav #{start_ms} #{end_ms} data/#{fn}.wav")
   md.puts "#{fn}|0|#{words}"
+  puts "#{fn}|0|#{words}"
 end
 md.close
