@@ -21,7 +21,7 @@ ffmpeg -v 0 -y -i ${FILENAME}.mp4 -ac 1 -ar 22050 ${FILENAME}.wav
 
 if [ -e ${FILENAME}.wav ] ; then
   echo "Segmenting"
-  ./parse_json3 ${FILENAME}.en.json3
+  ./parse_json3 --limit 100 ${FILENAME}.en.json3
 else
   echo "Did not generate ${FILENAME}.wav"
 fi
