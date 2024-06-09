@@ -1,15 +1,38 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'json'
 
+def options(argv)
+  o = {}
+  a = []
+
+  while argv.any?
+    x = argv.shift
+
+    if x.start_with?('--')
+      k = x[2..-1].downcase
+      v = argv.shift
+
+      v = v.to_i if v =~ /^\d+$/
+
+      o[k] = v
+    else
+      a << x
+    end
+  end
+
+  [o, a]
+end
+
 Dir.mkdir('data') unless File.directory?('data')
 
-filename = ARGV.shift
+opts, argv = options(ARGV.dup)
+
+filename = argv.shift
 json = open(filename, 'r').read
 data = JSON.parse(json)
 
-start = 0
-words = String.new
 file_number = 0
 
 name = File.basename(filename, '.en.json3')
@@ -38,5 +61,7 @@ data['events'].each do |event|
   system("./segment #{name}.wav #{start_ms} #{end_ms} data/#{fn}.wav")
   md.puts "#{fn}|0|#{words}"
   puts "#{fn}|0|#{words}"
+
+  break if opts['limit'] && opts['limit'] <= file_number
 end
 md.close
