@@ -52,20 +52,20 @@ Next we use `ffmpeg` to extract the audio to a mono wav file at 22050Hz which is
 
 ```json
 {
-  "events": [
-  	{
-   		"tStartMs": 179,
-    	"dDurationMs": 3031,
-    	"segs": [
-    		{ "utf8": "The US real estate market has frozen up." }
-    	]
-  	}
-	...
-  ]
+    "events": [
+        {
+            "tStartMs": 179,
+            "dDurationMs": 3031,
+            "segs": [
+                { "utf8": "The US real estate market has frozen up." }
+            ]
+        }
+        ...
+    ]
 }
 ```
 
-This is read that the words "The US real estate market has frozen up." starts 179 ms from the start of the data and last for 3031 ms. With this information `./parse_json3` calls `segment` which reads the wav file and chops out a chunk of the data from 179 ms in for 3031 ms and writes it to it's own file, `91UQfdUtTc0_00001.wav`, in the `data` directory and adds a line to `91UQfdUtTc0.txt` that Piper will also need
+This is read that the utterance "The US real estate market has frozen up." starts 179 ms from the start of the data and last for 3031 ms. With this information `./parse_json3` calls `segment` which reads the wav file and chops out a chunk of the data from 179 ms in for 3031 ms and writes it to it's own file, `91UQfdUtTc0_00001.wav`, in the `data` directory and adds a line to `91UQfdUtTc0.txt` that Piper will also need
 
 ```
 91UQfdUtTc0_00001|0|The US real estate market has frozen up.
@@ -109,7 +109,7 @@ The quality of the fake is so good that you will just have to take my word that 
 
 ## Issues
 
-One thing that I have noted, in the admittedly limited examples I have, is that the utterance taken from the transcript and the portion of the wav file that relates to it start to become out of sync as time progresses. After about 100 utterances entire words can be missing from the wav file compared to the transcript
+One thing that I have noted, in the admittedly limited examples I have, is that the utterance taken from the transcript and the portion of the wav file that relates to it start to become out of sync as time progresses. Beyond 100 utterances entire words can be missing from the wav file compared to the transcript
 
-Perhaps cutting off after 100 utterances might improve the quality but somehow it worked regardless. Ah the mysteries of AI :)
+Perhaps cutting off after 100 utterances might improve the quality but it worked regardless. Ah the mysteries of AI :)
 
