@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Correct a tranlation</title>
+<style>
+.content {
+  max-width: 800px;
+  margin: auto;
+  padding: 10px;
+}
+.content li {
+  font-size: 1.5em;
+}
+.faded {
+  color: #99A;
+}
+.content textarea {
+  margin-top: 20px;
+ font-size: 1.5em;
+}
+</style>
+  </head>
+  <body>
+    <div class="content">
+      <h2><%= s.inspect %></h2>
+      <h1>[#<%= r[:id] %>] <%= r[:filename] %></h1>
+      <% if r[:id] > 1 %>
+      <a href="/page/<%= r[:id] - 1%>">Previous</a>
+      <% end %>
+      <ul>
+        <li class="faded"><%= r[:m1] %></li>
+        <li><%= r[:updated] %></li>
+        <li class="faded"><%= r[:p1] %></li>
+      </ul>
+      <audio controls>
+        <source src="data/<%= r[:filename] %>.wav" />
+      </audio>
+      <br/>
+      <form action="/update/<%= r[:id] %>">
+        <textarea name="updated" rows="4" cols="80"><%= r[:updated] %> </textarea>
+        <br/>
+        <br/>
+        <label>Broken?
+          <input type="checkbox" name="broken">
+        </label>
+        <br/>
+        <br/>
+        <input type="submit">
+      </form>
+    </div>
+  </body>
+</html>

@@ -113,3 +113,23 @@ One thing that I have noted, in the admittedly limited examples I have, is that 
 
 Perhaps cutting off after 100 utterances might improve the quality but it worked regardless. Ah the mysteries of AI :)
 
+## Helpers
+
+Patrick Boyle was an ideal starting point as is no background sounds to distract and he doesn't swear. What happens when the source has either some background noise or swears? Say hello to [Emma Thorne](https://www.youtube.com/@EmmaThorneVideos)
+
+Most of the samples were pretty much flawless but some editing would be needed. So time to write a new app. First set up a blank database and run the import
+
+```bash
+$ sqlite database.sqlite3 < schema.sql
+$ ./import
+```
+
+We now have a database of the files we created in `data` and by running `./web` we can now review and edit the samples at `http://localhost:4567`. Interface noisy but we have our sample with it's cryptic name and a list of the pervious, current and next utterances. We can listen to the sample and correct the transcription or flag the sample as broken (if it is not just the desired speaker or is too noisy)
+
+Eventually we will have around 150-200 usable samples and it's time to export the usable samples
+
+```bash
+$ ./export
+```
+
+This will create a directory called `samples` that we can then feed to Piper like before

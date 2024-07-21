@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+
+require 'sinatra'
+require 'sequel'
+
+db = Sequel.connect('sqlite://database.sqlite3')
+
+def get_one(db)
+  r = db[:files].where(status: 'new').order(:id).first
+
+  if r
+    r2 = db[:files].where(id: r[:id] - 1).first
+    r[:m1] = r2 ? r2[:updated] : '...'
+
+    r2 = db[:files].where(id: r[:id] + 1).first
+    r[:p1] = r2 ? r2[:updated] : '...'
+  end
+
+  r
+end
+
+def get_this_one(db, id)
+  r = db[:files].where(id: id).first
+
+  if r
+    r2 = db[:files].where(id: id - 1).first
+    r[:m1] = r2 ? r2[:updated] : '...'
+
+    r2 = db[:files].where(id: id + 1).first
+    r[:p1] = r2 ? r2[:updated] : '...'
+  end
+
+  r
+end
+
+def get_status(db)
+  h = {'total' => 0}
+  db["SELECT status,COUNT(*) AS count FROM files GROUP BY status"].each do |row|
+    h[row[:status]] = row[:count]
+    h['total'] += row[:count]
+  end
+  h
+end
+
+set :public_folder, '/data'
+
+get '/' do
+  r = get_one(db)
+  s = get_status(db)
+  erb :index, locals: {r: r, s: s}
+end
+
+get '/page/:id' do
+  r = get_this_one(db, params[:id].to_i)
+  s = get_status(db)
+  erb :index, locals: {r: r, s: s}
+end
+
+get '/update/:id' do
+  db[:files].where(id: params[:id]).update(updated: params[:updated], status: params[:broken] ? 'broken' : 'updated')
+  redirect '/'
+end
+
+get '/data/:filename' do
+  send_file File.join("./data/#{params[:filename]}")
+end

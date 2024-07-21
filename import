@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'sequel'
+
+db = Sequel.connect('sqlite://database.sqlite3')
+
+db[:files].delete
+
+list = File.open('data/metadata.csv', 'r').map do |line|
+  filename, _, original = line.chomp.split('|', 3)
+
+  [filename, original]
+end.sort
+
+list.each do |(filename, original)|
+  db[:files].insert(filename: filename, original: original, updated: original, status: 'new')
+end

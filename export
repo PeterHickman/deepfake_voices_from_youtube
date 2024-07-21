@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+require 'sequel'
+
+FileUtils.rm_rf('samples') if File.exist?('samples')
+Dir.mkdir('samples')
+
+db = Sequel.connect('sqlite://database.sqlite3')
+
+c = 0
+t = ''
+db[:files].where(status: 'updated').each do |row|
+  c += 1
+  FileUtils.cp("data/#{row[:filename]}.wav", "samples/#{row[:filename]}.wav")
+  t << "#{row[:filename]}|0|#{row[:updated].chomp}\n"
+end
+
+puts "Exported #{c} samples"
+
+f = File.open('samples/metadata.csv', 'w')
+f.puts t
+f.close
