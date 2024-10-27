@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+git clone https://github.com/rhasspy/piper.git
+pip install pip wheel setuptools -U
+pip install piper-tts
+pip install build
+cd piper/src/python
+python -m build
+pip install -e .
+pip3 install -r requirements.txt
+bash ./build_monotonic_align.sh
+apt-get install espeak-ng
+pip install torchmetrics==0.11.4

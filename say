@@ -1,0 +1,71 @@
+#!/usr/bin/env ruby
+
+def list_voices
+  l = []
+
+  Dir['./voices/*/*.onnx'].sort.each do |dir|
+    name = File.basename(dir, '.onnx')
+    l << [name.split('_').map(&:capitalize).join(' '), dir]
+  end
+
+  l
+end
+
+voices = list_voices
+
+unless voices.any?
+  puts "There are no voices available in the ./voices directory"
+  exit(1)
+end
+
+index = -1
+while index == -1
+  puts "Choose a voice"
+  voices.each_with_index do |v, i|
+    puts "%2d : %s" % [i + 1, v[0]]
+  end
+  print("[1-#{voices.size}] ")
+  i = gets.to_i
+  if i > 0 && i <= voices.size
+    index = i - 1
+    break
+  end
+end
+
+voice = voices[index][1]
+
+output = nil
+
+loop do
+  puts "A filename to write the output to"
+  print("? ")
+  f = gets.chomp.strip
+
+  if f != ""
+    output = f
+    break
+  end
+end
+
+message = ""
+
+loop do
+  puts "The message to say"
+  print("? ")
+  f = gets.chomp.strip
+
+  if f.start_with?('@')
+    filename = f[1..-1]
+    if File.exist?(filename)
+      message = File.open(filename, 'r').read
+      break
+    else
+      puts "Unknown file [#{filename}]"
+    end
+  elsif f != ""
+    message = f
+    break
+  end
+end
+
+`echo #{message} | piper -m #{voice} --output_file /app/output/#{output}`

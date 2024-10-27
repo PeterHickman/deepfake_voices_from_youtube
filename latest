@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+Dir["training/lightning_logs/*/checkpoints/*.ckpt"].sort.each do |file|
+  name = File.basename(file)
+
+  if File.exist?(name)
+    puts "We already have a copy of this"
+  else
+    puts "Copying #{name}"
+    FileUtils.cp(file, name)
+  end
+end
